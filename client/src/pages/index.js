@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, Divider, List, ListItem, Typography } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import Layout from "../components/Layout";
@@ -77,6 +77,13 @@ const DetailRow = ({ title, value }) => {
   );
 };
 
+const CustomDialog = styled(Dialog)(({ theme }) => ({
+  '& .historyTitle': {
+    marginTop: '2rem',
+    fontWeight: 500,
+  }
+}));
+
 const Index = () => {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [selectedBooks, setSelectedBooks] = useState([]);
@@ -129,7 +136,7 @@ const Index = () => {
           </div>
         </Section1>
 
-        <Dialog
+        <CustomDialog
           fullWidth
           open={showDetailsDialog}
           scroll="body"
@@ -169,10 +176,17 @@ const Index = () => {
                       value={selectedBook.status}
                     />}
                 </List>
+
+                <Typography variant='h5' className='historyTitle'>History</Typography>
+                <List>
+                  <ListItem>
+                    <ListItemText primary='Imran Checked-out' secondary='on 01-02-2022'/>
+                  </ListItem>
+                </List>
               </>
             )}
           </DialogContent>
-        </Dialog>
+        </CustomDialog>
       </Root>
     </Layout>
   );
