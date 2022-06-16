@@ -64,7 +64,7 @@ const Bar = styled(AppBar)(({ theme }) => ({
       marginLeft: '2rem',
       fontWeight: 600,
       boxShadow: 'none',
-      padding: '.8rem 2rem',
+      padding: '.4rem 2rem',
       borderRadius: '8px',
       fontSize: '1rem',
       [theme.breakpoints.only('sm')]: {

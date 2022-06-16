@@ -10,7 +10,7 @@ const Root = styled('div')(({ theme }) => ({
 const Layout = ({ showHeader = true, showFooter = true, allowContentPadding = true, children }) => {
   const ContentWrap = styled('div')(({ theme, showFooter }) => ({
     padding: allowContentPadding ? '0 6rem' : '',
-    paddingBottom: showFooter ? '35rem' : '0',
+    paddingBottom: showFooter ? '40rem' : '0',
     [theme.breakpoints.only('xs')]: {
       padding: allowContentPadding ? '0 1rem' : '',
       paddingBottom: showFooter ? '75rem' : '0',
