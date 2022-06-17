@@ -4,9 +4,11 @@ import Layout from '../components/Layout';
 import { Form, Formik } from "formik";
 import FormikField from '../components/FormikField';
 import FormikDesktopDatePicker from '../components/FormikDesktopDatePicker';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CustomButton from '../components/CustomButton';
 import * as yup from "yup";
+import { useParams } from 'react-router-dom';
+import { axiosInstance, generateErrorsMarkup, ReactSwal, showError, showLoading, showNetworkError, showSuccess } from '../components/utils';
 
 const Root = styled('div')(({ theme }) => ({
   marginTop: '2rem',
@@ -26,7 +28,34 @@ const Root = styled('div')(({ theme }) => ({
 
 const Checkin = () => {
   const [date, setDate] = useState(new Date());
-  const [returnDate, setReturnDate] = useState(new Date(Date.now() + (15 * 8.64e+7)));
+  const [returnDate, setReturnDate] = useState(new Date());
+  const [check, setCheck] = useState(null);
+
+  const { isbn } = useParams();
+
+  useEffect(() => {
+    showLoading();
+
+    axiosInstance.get('book/' + isbn)
+    .then(res => {
+      ReactSwal.close();
+
+      if (res.status === 200) {
+        const data = res.data.checks[res.data.checks.length - 1];
+        setDate(data.checkout_date);
+        setReturnDate(data.return_date);
+        setCheck(data);
+      }
+      else
+        showNetworkError();
+    })
+    .catch((e) => {
+      ReactSwal.close();
+
+      console.log(e);
+      showNetworkError();
+    });
+  }, [isbn]);
 
   const handleDateChange = (newValue) => {
     setDate(newValue);
@@ -37,6 +66,29 @@ const Checkin = () => {
     setReturnDate(newValue);
   };
 
+  const submit = () => {
+    showLoading('Please wait...');
+
+    axiosInstance.post('book/checkin/' + isbn, {})
+    .then(res => {
+      ReactSwal.close();
+
+      if (res.status === 200)
+        showSuccess('Success', 'Book Checked-in!');
+      else if (res.status === 400) {
+        showError('Oops!', generateErrorsMarkup(res.data.messages));
+      }
+      else
+        showNetworkError();
+    })
+    .catch((e) => {
+      ReactSwal.close();
+
+      console.log(e);
+      showNetworkError();
+    });
+  };
+
   return (
     <Layout>
       <Root>
@@ -44,12 +96,13 @@ const Checkin = () => {
 
         <div className="formContainer">
           <Formik
+            enableReinitialize={true}
             initialValues={{
-              borrower_name: '',
-              borrower_phone: '',
-              borrower_nid: '',
-              checkout_date: date,
-              return_date: returnDate,
+              borrower_name: check ? check.borrower_name : '',
+              borrower_phone: check ? check.borrower_phone : '',
+              borrower_nid: check ? check.borrower_nid : '',
+              checkout_date: check ? check.checkout_date : date,
+              return_date: check ? check.return_date : returnDate,
             }}
 
             validationSchema={yup.object({
@@ -67,6 +120,8 @@ const Checkin = () => {
               return_date: yup.date()
                 .required('Please enter return date'),
             })}
+
+            onSubmit={submit}
           >
             <Form className="form">
               <FormikField

@@ -233,7 +233,7 @@ const Index = () => {
                 <List>
                   {selectedBook.checks.map((value, index) => 
                     <ListItem key={index}>
-                      <ListItemText primary={`${value.borrower_name} ${value.status}`} secondary={`on ${value.created_at}`}/>
+                      <ListItemText primary={`${value.borrower_name} ${value.status}`} secondary={`on ${new Date(value.created_at).toUTCString()}`}/>
                     </ListItem>)}
                 </List>
               </>

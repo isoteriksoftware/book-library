@@ -7,6 +7,8 @@ import FormikDesktopDatePicker from '../components/FormikDesktopDatePicker';
 import { useState } from 'react';
 import CustomButton from '../components/CustomButton';
 import * as yup from "yup";
+import { axiosInstance, generateErrorsMarkup, ReactSwal, showError, showLoading, showNetworkError, showSuccess } from '../components/utils';
+import { useParams } from 'react-router-dom';
 
 const Root = styled('div')(({ theme }) => ({
   marginTop: '2rem',
@@ -27,6 +29,7 @@ const Root = styled('div')(({ theme }) => ({
 const Checkout = () => {
   const [date, setDate] = useState(new Date());
   const [returnDate, setReturnDate] = useState(new Date(Date.now() + (15 * 8.64e+7)));
+  const { isbn } = useParams();
 
   const handleDateChange = (newValue) => {
     setDate(newValue);
@@ -35,6 +38,29 @@ const Checkout = () => {
 
   const handleReturnDateChange = (newValue) => {
     setReturnDate(newValue);
+  };
+
+  const submit = (values) => {
+    showLoading('Please wait...');
+
+    axiosInstance.post('book/checkout/' + isbn, values)
+    .then(res => {
+      ReactSwal.close();
+
+      if (res.status === 200)
+        showSuccess('Success', 'Book Checked-out!');
+      else if (res.status === 400) {
+        showError('Oops!', generateErrorsMarkup(res.data.messages));
+      }
+      else
+        showNetworkError();
+    })
+    .catch((e) => {
+      ReactSwal.close();
+
+      console.log(e);
+      showNetworkError();
+    });
   };
 
   return (
@@ -67,6 +93,8 @@ const Checkout = () => {
               return_date: yup.date()
                 .required('Please enter return date'),
             })}
+
+            onSubmit={submit}
           >
             <Form className="form">
               <FormikField

@@ -104,6 +104,16 @@ app.post('/book', (req, res) => {
   validateRequest(req, res, validationRules.create, handler);
 });
 
+app.get('/book/:isbn', async (req, res) => {
+  const isbn = req.params.isbn;
+  
+  const book = await Book.findOne({ isbn: isbn });
+  if (!book)
+    return res.failNotFound('Book not found');
+  
+  return res.respond(book);
+});
+
 app.post('/book/checkout/:isbn', async (req, res) => {
   const isbn = req.params.isbn;
     
@@ -113,7 +123,7 @@ app.post('/book/checkout/:isbn', async (req, res) => {
     return res.failNotFound('Book not found');
   
   if (book.status === 'Checked-out')
-    return res.failValidationError('This book is already checked-out');
+    return res.failValidationError(['This book is already checked-out']);
 
   const handler = async () => {
     const checkData = {};
@@ -140,7 +150,7 @@ app.post('/book/checkin/:isbn', async (req, res) => {
     return res.failNotFound('Book not found');
   
   if (book.status === 'Checked-in')
-    return res.failValidationError('This book is already checked-in');
+    return res.failValidationError(['This book is already checked-in']);
 
   const lastCheck = book.checks[book.checks.length - 1];
   if (!lastCheck)
