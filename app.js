@@ -70,7 +70,7 @@ const extractUpdatableModelFieldsFromRequest = (req, updatableModelPath, updatab
 };
 
 // Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, '/client/build')));
 
 app.get("/api", (req, res) => {
   res.send("Book Library API");
@@ -179,7 +179,7 @@ app.post('/api/book/checkin/:isbn', async (req, res) => {
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/../client/build/index.html'))
+  res.sendFile(path.join(__dirname + '/client/build/index.html'))
 });
 
 app.use((error, _req, res, _next) => {
@@ -187,7 +187,7 @@ app.use((error, _req, res, _next) => {
   res.failServerError();
 });
 
-app.set("port", process.env.PORT || 3001);
+app.set("port", process.env.PORT || 5000);
 
 // Connect to the database
 mongoose.connect(
