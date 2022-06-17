@@ -6,6 +6,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import Index from './pages'
 import theme from './themes/default'
 import Checkout from './pages/checkout';
+import Checkin from './pages/checkin';
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterMoment}>
         <BrowserRouter>
           <Switch>
+            <Route path='/checkin/:isbn'>
+              <Checkin/>
+            </Route>
             <Route path='/checkout/:isbn'>
               <Checkout/>
             </Route>

@@ -24,7 +24,7 @@ const Root = styled('div')(({ theme }) => ({
   },
 }));
 
-const Checkout = () => {
+const Checkin = () => {
   const [date, setDate] = useState(new Date());
   const [returnDate, setReturnDate] = useState(new Date(Date.now() + (15 * 8.64e+7)));
 
@@ -40,7 +40,7 @@ const Checkout = () => {
   return (
     <Layout>
       <Root>
-        <Typography variant='h4' className='title'>Check-out</Typography>
+        <Typography variant='h4' className='title'>Check-in</Typography>
 
         <div className="formContainer">
           <Formik
@@ -75,6 +75,7 @@ const Checkout = () => {
                 label="Borrower's Name"
                 color="secondary"
                 className="form-input"
+                disabled={true}
                 InputProps={{ className: "field" }}
               />
               <FormikField
@@ -83,6 +84,7 @@ const Checkout = () => {
                 label="Borrower's Phone"
                 color="secondary"
                 className="form-input"
+                disabled={true}
                 InputProps={{ className: "field" }}
               />
               <FormikField
@@ -91,6 +93,7 @@ const Checkout = () => {
                 label="Borrower's National ID"
                 color="secondary"
                 className="form-input"
+                disabled={true}
                 InputProps={{ className: "field" }}
               />
               <FormikDesktopDatePicker
@@ -100,6 +103,7 @@ const Checkout = () => {
                 color="secondary"
                 className="form-input"
                 inputFormat="DD/MM/yyyy"
+                disabled={true}
                 value={date}
                 onChange={handleDateChange}
                 InputProps={{ className: "field" }}
@@ -111,13 +115,14 @@ const Checkout = () => {
                 color="secondary"
                 className="form-input"
                 inputFormat="DD/MM/yyyy"
+                disabled={true}
                 value={returnDate}
                 onChange={handleReturnDateChange}
                 InputProps={{ className: "field" }}
               />
 
               <CustomButton color="secondary" variant="contained" type="submit" className="btn">
-                Check-out
+                Check-in
               </CustomButton>
             </Form>
           </Formik>
@@ -127,4 +132,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default Checkin;
