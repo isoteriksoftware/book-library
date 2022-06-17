@@ -25,7 +25,7 @@ const dbLink = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.hu9ei.mongodb.net
 
 const allowedDomains = [
   "http://localhost:3000",
-  
+  "https://imran-book-library.herokuapp.com/",
 ];
 const corsConfig = {
   origin: (origin, callback) => {
@@ -41,13 +41,13 @@ const corsConfig = {
   credentials: true,
 };
 
-app.options("*", cors(corsConfig));
 app.use(cors(corsConfig));
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("combined"));
 app.use(responseHelper.helper());
+app.options("*", cors(corsConfig));
 
 const validateRequest = (req, res, rules, onSucceed) => {
   const validationResult = rules.validate(req.body, { abortEarly: false });
