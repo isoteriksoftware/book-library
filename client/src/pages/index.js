@@ -6,6 +6,7 @@ import CustomButton from "../components/CustomButton";
 import { useEffect, useState } from 'react';
 import SlideTransition from "../components/SlideTransition";
 import { showError } from '../components/utils';
+import { useHistory } from 'react-router-dom';
 
 const Root = styled('div')(({ theme }) => ({
   
@@ -91,6 +92,8 @@ const Index = () => {
   const [disableCheckout, setDisableCheckout] = useState(true);
   const [disableCheckin, setDisableCheckin] = useState(true);
 
+  const history = useHistory();
+
   const showDetails = () => {
     if (selectedBooks.length === 0) {
       showError('Oops!', 'Please select a book first');
@@ -123,6 +126,20 @@ const Index = () => {
     }
   }, [selectedBook]);
 
+  const checkout = () => {
+    if (selectedBook === null)
+      return;
+
+    history.push('checkout/' + selectedBook.isbn);
+  };
+
+  const checkin = () => {
+    if (selectedBook === null)
+      return;
+
+    history.push('checkin/' + selectedBook.isbn);
+  };
+
   return (
     <Layout>
       <Root>
@@ -143,10 +160,10 @@ const Index = () => {
           />
 
           <div className='actionBtns'>
-            <CustomButton variant="contained" color="secondary" className='btn' disabled={disableCheckin}>
+            <CustomButton variant="contained" color="secondary" className='btn' disabled={disableCheckin} onClick={checkin}>
               Check-in
             </CustomButton>
-            <CustomButton variant="contained" color="secondary" className='btn' disabled={disableCheckout}>
+            <CustomButton variant="contained" color="secondary" className='btn' disabled={disableCheckout} onClick={checkout}>
               Check-out
             </CustomButton>
             <CustomButton variant="contained" color="secondary" className='btn' onClick={showDetails}>
