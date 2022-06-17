@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import { DataGrid } from '@mui/x-data-grid';
 import Layout from "../components/Layout";
 import CustomButton from "../components/CustomButton";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SlideTransition from "../components/SlideTransition";
 import { showError } from '../components/utils';
 
@@ -88,6 +88,8 @@ const Index = () => {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [disableCheckout, setDisableCheckout] = useState(true);
+  const [disableCheckin, setDisableCheckin] = useState(true);
 
   const showDetails = () => {
     if (selectedBooks.length === 0) {
@@ -100,9 +102,26 @@ const Index = () => {
       return;
     }
 
-    setSelectedBook(rows.find(row => row.isbn === selectedBooks[0]));
     setShowDetailsDialog(true);
   };
+
+  useEffect(() => {
+    setSelectedBook(null);
+
+    if (selectedBooks.length === 1)
+      setSelectedBook(rows.find(row => row.isbn === selectedBooks[0]));
+  }, [selectedBooks]);
+
+  useEffect(() => {
+    if (selectedBook == null) {
+      setDisableCheckin(true);
+      setDisableCheckout(true);
+    }
+    else {
+      setDisableCheckin(selectedBook.status === 'Checked-in');
+      setDisableCheckout(selectedBook.status === 'Checked-out');
+    }
+  }, [selectedBook]);
 
   return (
     <Layout>
@@ -124,10 +143,10 @@ const Index = () => {
           />
 
           <div className='actionBtns'>
-            <CustomButton variant="contained" color="secondary" className='btn'>
+            <CustomButton variant="contained" color="secondary" className='btn' disabled={disableCheckin}>
               Check-in
             </CustomButton>
-            <CustomButton variant="contained" color="secondary" className='btn'>
+            <CustomButton variant="contained" color="secondary" className='btn' disabled={disableCheckout}>
               Check-out
             </CustomButton>
             <CustomButton variant="contained" color="secondary" className='btn' onClick={showDetails}>
