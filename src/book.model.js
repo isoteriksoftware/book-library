@@ -46,7 +46,13 @@ const schema = new mongoose.Schema({
       return_date: {
         type: String,
         required: true
-      }
+      },
+      status: {
+        type: String,
+        required: true,
+        enum: ['Checked-in', 'Checked-out'],
+        default: 'Checked-out'
+      },
     }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }),
 }],
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });

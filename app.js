@@ -142,10 +142,26 @@ app.post('/book/checkin/:isbn', async (req, res) => {
   if (book.status === 'Checked-in')
     return res.failValidationError('This book is already checked-in');
 
-    book.status = 'Checked-in';
-    await book.save();
+  const lastCheck = book.checks[book.checks.length - 1];
+  if (!lastCheck)
+    return res.failServerError();
 
-    return res.respondUpdated('Book checked-in');
+  const newCheck = {
+    borrower_name: lastCheck.borrower_name,
+    borrower_phone: lastCheck.borrower_phone,
+    borrower_nid: lastCheck.borrower_nid,
+    checkout_date: lastCheck.checkout_date,
+    return_date: new Date(),
+    status: 'Checked-in',
+  };
+
+  console.log(newCheck);
+  
+  book.checks.push(newCheck);
+  book.status = 'Checked-in';
+  await book.save();
+
+  return res.respondUpdated('Book checked-in');
 });
 
 app.use((error, _req, res, _next) => {

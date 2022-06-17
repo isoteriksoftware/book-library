@@ -5,7 +5,7 @@ import Layout from "../components/Layout";
 import CustomButton from "../components/CustomButton";
 import { useEffect, useState } from 'react';
 import SlideTransition from "../components/SlideTransition";
-import { showError } from '../components/utils';
+import { axiosInstance, showError, showNetworkError } from '../components/utils';
 import { useHistory } from 'react-router-dom';
 
 const Root = styled('div')(({ theme }) => ({
@@ -55,11 +55,6 @@ const columns = [
   },
 ];
 
-const rows = [
-  { title: 'Book 1', isbn: '125373849', publishYear: '2022', coverPrice: 1400, status: 'Checked-out' },
-  { title: 'Book 2', isbn: '125373949', publishYear: '2022', coverPrice: 1400, status: 'Checked-in' },
-];
-
 const DetailRow = ({ title, value }) => {
   const Row = styled(ListItem)(({ theme }) => ({
     display: 'flex',
@@ -91,6 +86,8 @@ const Index = () => {
   const [selectedBook, setSelectedBook] = useState(null);
   const [disableCheckout, setDisableCheckout] = useState(true);
   const [disableCheckin, setDisableCheckin] = useState(true);
+  const [disableDetails, setDisableDetails] = useState(true);
+  const [books, setBooks] = useState([]);
 
   const history = useHistory();
 
@@ -109,20 +106,39 @@ const Index = () => {
   };
 
   useEffect(() => {
+    axiosInstance.get('book')
+    .then(res => {
+      if (res.status === 200)
+        setBooks(res.data);
+      else
+        showNetworkError();
+    })
+    .catch((e) => {
+      console.log(e);
+      showNetworkError();
+    });
+  }, []);
+
+  useEffect(() => {
+    if (books.length === 0)
+    return;
+    
     setSelectedBook(null);
 
     if (selectedBooks.length === 1)
-      setSelectedBook(rows.find(row => row.isbn === selectedBooks[0]));
-  }, [selectedBooks]);
+      setSelectedBook(books.find(row => row.isbn === selectedBooks[0]));
+  }, [books, selectedBooks]);
 
   useEffect(() => {
     if (selectedBook == null) {
       setDisableCheckin(true);
       setDisableCheckout(true);
+      setDisableDetails(true);
     }
     else {
       setDisableCheckin(selectedBook.status === 'Checked-in');
       setDisableCheckout(selectedBook.status === 'Checked-out');
+      setDisableDetails(false);
     }
   }, [selectedBook]);
 
@@ -146,7 +162,7 @@ const Index = () => {
         <Section1>
           <Typography variant='h5' className='title'>Available Books</Typography>
           <DataGrid
-            rows={rows}
+            rows={books}
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5]}
@@ -166,7 +182,7 @@ const Index = () => {
             <CustomButton variant="contained" color="secondary" className='btn' disabled={disableCheckout} onClick={checkout}>
               Check-out
             </CustomButton>
-            <CustomButton variant="contained" color="secondary" className='btn' onClick={showDetails}>
+            <CustomButton variant="contained" color="secondary" className='btn' disabled={disableDetails} onClick={showDetails}>
               Details
             </CustomButton>
           </div>
@@ -215,9 +231,10 @@ const Index = () => {
 
                 <Typography variant='h5' className='historyTitle'>History</Typography>
                 <List>
-                  <ListItem>
-                    <ListItemText primary='Imran Checked-out' secondary='on 01-02-2022'/>
-                  </ListItem>
+                  {selectedBook.checks.map((value, index) => 
+                    <ListItem key={index}>
+                      <ListItemText primary={`${value.borrower_name} ${value.status}`} secondary={`on ${value.created_at}`}/>
+                    </ListItem>)}
                 </List>
               </>
             )}
