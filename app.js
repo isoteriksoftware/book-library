@@ -72,16 +72,16 @@ const extractUpdatableModelFieldsFromRequest = (req, updatableModelPath, updatab
 // Serve static files from the React frontend app
 app.use(express.static(path.join(__dirname, '../client/build')));
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.send("Book Library API");
 });
 
-app.get("/book", async (req, res) => {
+app.get("/api/book", async (req, res) => {
   const books = await Book.find();
   return res.respond(books);
 });
 
-app.post('/book', (req, res) => {
+app.post('/api/book', (req, res) => {
   const handler = async () => {
     const body = req.body;
     // Duplicate errors
@@ -108,7 +108,7 @@ app.post('/book', (req, res) => {
   validateRequest(req, res, validationRules.create, handler);
 });
 
-app.get('/book/:isbn', async (req, res) => {
+app.get('/api/book/:isbn', async (req, res) => {
   const isbn = req.params.isbn;
   
   const book = await Book.findOne({ isbn: isbn });
@@ -118,7 +118,7 @@ app.get('/book/:isbn', async (req, res) => {
   return res.respond(book);
 });
 
-app.post('/book/checkout/:isbn', async (req, res) => {
+app.post('/api/book/checkout/:isbn', async (req, res) => {
   const isbn = req.params.isbn;
     
   // Extract the required data
@@ -145,7 +145,7 @@ app.post('/book/checkout/:isbn', async (req, res) => {
   validateRequest(req, res, validationRules.checkout, handler);
 });
 
-app.post('/book/checkin/:isbn', async (req, res) => {
+app.post('/api/book/checkin/:isbn', async (req, res) => {
   const isbn = req.params.isbn;
     
   // Extract the required data
