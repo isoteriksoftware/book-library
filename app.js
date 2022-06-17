@@ -8,6 +8,7 @@ const responseHelper = require("express-response-helper");
 
 const http = require("http");
 const { validationRules, Book } = require("./src/book.model");
+const path = require("path");
 
 // Set time zone
 require("set-tz")("Africa/Lagos");
@@ -67,6 +68,9 @@ const extractUpdatableModelFieldsFromRequest = (req, updatableModelPath, updatab
   updatedFields.forEach(field => updatableModelPath[field] = body[field]);
   return updatedFields;
 };
+
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.get("/", (req, res) => {
   res.send("Book Library API");
@@ -172,6 +176,10 @@ app.post('/book/checkin/:isbn', async (req, res) => {
   await book.save();
 
   return res.respondUpdated('Book checked-in');
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/../client/build/index.html'))
 });
 
 app.use((error, _req, res, _next) => {
