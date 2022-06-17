@@ -5,7 +5,7 @@ import * as ReactScroll from 'react-scroll';
 
 const IS_DEVELOPMENT_MODE = process.env.NODE_ENV === 'development';
 
-export const API_BASE_URL = IS_DEVELOPMENT_MODE ? 'http://localhost:5000/api/' : 'https://imran-book-library.herokuapp.com/api';
+export const API_BASE_URL = IS_DEVELOPMENT_MODE ? 'http://localhost:5000/api/' : 'https://imran-book-library.herokuapp.com/api/';
 
 export const ReactSwal = withReactContent(Swal);
 export const animateScroll = ReactScroll.animateScroll;

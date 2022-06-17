@@ -29,12 +29,6 @@ const allowedDomains = [
 ];
 const corsConfig = {
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-
-    if (allowedDomains.indexOf(origin) === -1) {
-      return callback(new Error("Unknown origin"), false);
-    }
-
     return callback(null, origin);
   },
   methods: "POST, GET, OPTIONS, DELETE, PATCH, PUT",
